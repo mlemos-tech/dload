@@ -4,7 +4,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func AppConfigLog(c Config) {
+func AppConfigLog(c Properties) {
 	if c.Logging.Debug {
 		logrus.SetLevel(logrus.DebugLevel)
 	}

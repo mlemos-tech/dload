@@ -7,7 +7,7 @@ import (
 	"mikaellemos.com.br/dload/src/web"
 )
 
-func provideServer(handler phi.Handler, config config.Config) *server.Server {
+func provideServer(handler phi.Handler, config config.Properties) *server.Server {
 	return &server.Server{
 		Host:    config.Server.Host,
 		Port:    config.Server.Port,

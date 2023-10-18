@@ -6,7 +6,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func UpEnvironmentConfig() (Config, error) {
+func UpEnvironmentConfig() (Properties, error) {
 	var envfile string
 	flag.StringVar(&envfile, "env-file", "../resource/dev.env", "Read in file of enviroment variables")
 	flag.Parse()

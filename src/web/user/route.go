@@ -1,18 +1,14 @@
 package user
 
 import (
-	"encoding/json"
-	"fmt"
-	"github.com/sirupsen/logrus"
 	"github.com/valyala/fasthttp"
 	"mikaellemos.com.br/dload/src/service/userserv"
+	"mikaellemos.com.br/dload/src/web/utils"
 	"strconv"
 )
 
 func List(ctx *fasthttp.RequestCtx) {
-	ctx.SetContentType("application/json")
 	page := ctx.QueryArgs().Peek("page")
-	logrus.Info(page)
 	_page := string(page)
 	parseInt, err := strconv.ParseInt(_page, 10, 64)
 
@@ -20,43 +16,31 @@ func List(ctx *fasthttp.RequestCtx) {
 		parseInt = 0
 	}
 
-	list := userserv.List(parseInt)
-	payload, _ := json.Marshal(&list)
-	fmt.Fprint(ctx, string(payload))
+	list := userserv.List(int(parseInt))
+	utils.Render(ctx, 200, &list)
 }
 
 func Create(ctx *fasthttp.RequestCtx) {
 	newUser, err := userserv.Create(ctx.Request.Body())
-	ctx.SetContentType("application/json")
 
 	if err != nil {
-		body, _ := json.Marshal(&err)
-		ctx.SetStatusCode(400)
-		ctx.SetBody(body)
-
+		utils.Render(ctx, 400, &err)
 		return
 	}
 
-	body, _ := json.Marshal(newUser)
-	ctx.SetStatusCode(201)
-	ctx.SetBody(body)
+	utils.Render(ctx, 201, &newUser)
 }
 
 func Update(ctx *fasthttp.RequestCtx) {
-
-	ctx.SetContentType("application/json")
 	id := ctx.QueryArgs().Peek("id")
-	user, err := userserv.Update(string(id), ctx.Request.Body())
+	iduint, _ := strconv.ParseUint(string(id), 10, 64)
+	user := userserv.Update(iduint, ctx.Request.Body())
+	utils.Render(ctx, 200, user)
+}
 
-	if err != nil {
-		body, _ := json.Marshal(&err)
-		ctx.SetStatusCode(400)
-		ctx.SetBody(body)
-
-		return
-	}
-
-	body, _ := json.Marshal(user)
-	ctx.SetStatusCode(201)
-	ctx.SetBody(body)
+func Delete(ctx *fasthttp.RequestCtx) {
+	id := ctx.QueryArgs().Peek("id")
+	iduint, _ := strconv.ParseUint(string(id), 10, 64)
+	userserv.Remove(int(iduint))
+	utils.Render(ctx, 202, nil)
 }

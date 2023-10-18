@@ -6,7 +6,7 @@ import (
 )
 
 type (
-	Config struct {
+	Properties struct {
 		Server  Server
 		Logging Logging
 		DB      DB
@@ -31,14 +31,14 @@ type (
 	}
 )
 
-func ConfigEnvironment() (Config, error) {
-	cfg := Config{}
+func ConfigEnvironment() (Properties, error) {
+	cfg := Properties{}
 	err := envconfig.Process("", &cfg)
 
 	return cfg, err
 }
 
-func (c *Config) String() string {
+func (c *Properties) String() string {
 	out, _ := yaml.Marshal(c)
 	return string(out)
 }

@@ -2,15 +2,13 @@ package validate
 
 import (
 	"encoding/json"
-	"mikaellemos.com.br/dload/src/model/user"
-
 	"github.com/go-playground/validator/v10"
 	"mikaellemos.com.br/dload/src/model"
 )
 
-func Validate(body []byte) (*user.User, *[]model.ApiError) {
+func Validate(body []byte) (*model.User, *[]model.ApiError) {
 
-	var _user user.User
+	var _user model.User
 	_ = json.Unmarshal(body, &_user)
 
 	validate := validator.New()
@@ -24,7 +22,7 @@ func Validate(body []byte) (*user.User, *[]model.ApiError) {
 			errors = append(errors, apiError)
 		}
 
-		return &user.User{}, &errors
+		return &model.User{}, &errors
 	}
 
 	return &_user, nil

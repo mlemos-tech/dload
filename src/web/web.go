@@ -9,10 +9,15 @@ import (
 func Handler() *phi.Mux {
 	r := phi.NewRouter()
 
+	r.Route("/users", func(r phi.Router) {
+		r.Use(Middle)
+		r.Get("/", user.List)
+		r.Post("/", user.Create)
+		r.Put("/", user.Update)
+		r.Delete("/", user.Delete)
+	})
+
 	r.Get("/", home.Index)
-	r.Get("/swagger", user.List)
-	r.Post("/swagger", user.Create)
-	r.Put("/swagger/{$}", user.Update)
 
 	return r
 }
