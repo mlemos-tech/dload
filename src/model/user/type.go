@@ -1,35 +1,35 @@
-package model
+package user
 
 import (
 	"context"
+	"mikaellemos.com.br/dload/src/config"
 	"time"
 
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
+
+//const COLLECTION_NAME = "users"
 
 type User struct {
 	ID        primitive.ObjectID `bson:"_id,omitempty"`
 	Name      string             `bson:"name" json:"name" validate:"required"`
 	Email     string             `bson:"email" json:"email" validate:"email,required"`
-	CreatedAt time.Time          `bson:"created_at"`
-	UpdatedAt time.Time          `bson:"updated_at"`
+	CreatedAt primitive.DateTime `bson:"created_at"`
+	UpdatedAt primitive.DateTime `bson:"updated_at"`
 }
 
-func (m User) Create(ctx context.Context, db *mongo.Database, collectionName string, model interface{}) error {
+func (m User) Create(model interface{}) error {
 
-	collection := db.Collection(collectionName)
-	loc, _ := time.LoadLocation("America/Sao_Paulo")
+	db := config.Client()
+	collection := db.Collection(COLLECTION_NAME)
+	//loc, _ := time.LoadLocation("America/Sao_Paulo")
 
-	m.CreatedAt = time.Now().In(loc)
-	m.UpdatedAt = time.Now().In(loc)
-
-	logrus.Info("fdnkdnfkndng jnj" + time.Now().In(loc).String())
-
-	res, err := collection.InsertOne(ctx, model)
+	m.CreatedAt = primitive.NewDateTimeFromTime(time.Now())
+	m.UpdatedAt = primitive.NewDateTimeFromTime(time.Now())
+	res, err := collection.InsertOne(context.Background(), model)
 
 	if err != nil {
 		logrus.Error(err)
@@ -41,9 +41,11 @@ func (m User) Create(ctx context.Context, db *mongo.Database, collectionName str
 
 }
 
-func (m User) List(ctx context.Context, db *mongo.Database, collectionName string, model interface{}) []User {
+func (m User) List(model interface{}) []User {
 
-	collection := db.Collection(collectionName)
+	db := config.Client()
+	collection := db.Collection(COLLECTION_NAME)
+	ctx := context.Background()
 	limit := int64(2)
 	skip := int64(2)
 	opt := options.FindOptions{Limit: &limit, Skip: &skip}

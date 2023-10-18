@@ -13,5 +13,6 @@ func InitializeApplication(propertie config.Config) (application, error) {
 	handler := provideRouter()
 	server := provideServer(handler, propertie)
 	mainApplication := application{Server: server}
+	config.Connect(&propertie.DB)
 	return mainApplication, nil
 }

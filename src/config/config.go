@@ -9,6 +9,7 @@ type (
 	Config struct {
 		Server  Server
 		Logging Logging
+		DB      DB
 	}
 
 	Logging struct {
@@ -22,6 +23,11 @@ type (
 	Server struct {
 		Host string `envconfig:"SERVER_HOST" default:"localhost"`
 		Port int    `envconfig:"SERVER_PORT" default:"8080"`
+	}
+
+	DB struct {
+		Uri      string `envconfig:"DB_URI"`
+		Database string `envconfig:"DB_NAME" default:"dload"`
 	}
 )
 

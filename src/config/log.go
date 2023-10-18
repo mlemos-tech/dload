@@ -5,7 +5,6 @@ import (
 )
 
 func AppConfigLog(c Config) {
-
 	if c.Logging.Debug {
 		logrus.SetLevel(logrus.DebugLevel)
 	}
