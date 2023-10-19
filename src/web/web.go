@@ -12,6 +12,7 @@ func Handler() *phi.Mux {
 	r.Route("/users", func(r phi.Router) {
 		r.Use(Middle)
 		r.Get("/", user.List)
+		r.Get("/show", user.Show)
 		r.Post("/", user.Create)
 		r.Put("/", user.Update)
 		r.Delete("/", user.Delete)

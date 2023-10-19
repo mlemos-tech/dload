@@ -1,12 +1,11 @@
 package home
 
 import (
-	"fmt"
-
 	"github.com/valyala/fasthttp"
+	"mikaellemos.com.br/dload/src/model"
+	"mikaellemos.com.br/dload/src/web/utils"
 )
 
 func Index(ctx *fasthttp.RequestCtx) {
-	ctx.SetContentType("text/html")
-	fmt.Fprint(ctx, "Welcome to Home Page!\n")
+	utils.Render(ctx, 200, model.Message{"Hello World!"})
 }

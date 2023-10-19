@@ -1,8 +1,11 @@
 package user
 
 import (
+	"github.com/google/uuid"
+	"github.com/sirupsen/logrus"
 	"github.com/valyala/fasthttp"
-	"mikaellemos.com.br/dload/src/service/userserv"
+	"mikaellemos.com.br/dload/src/model"
+	"mikaellemos.com.br/dload/src/service"
 	"mikaellemos.com.br/dload/src/web/utils"
 	"strconv"
 )
@@ -16,15 +19,15 @@ func List(ctx *fasthttp.RequestCtx) {
 		parseInt = 0
 	}
 
-	list := userserv.List(int(parseInt))
+	list := service.List(int(parseInt))
 	utils.Render(ctx, 200, &list)
 }
 
 func Create(ctx *fasthttp.RequestCtx) {
-	newUser, err := userserv.Create(ctx.Request.Body())
+	newUser, apiError := service.Create(ctx.Request.Body())
 
-	if err != nil {
-		utils.Render(ctx, 400, &err)
+	if apiError != nil {
+		utils.Render(ctx, 400, apiError)
 		return
 	}
 
@@ -32,15 +35,40 @@ func Create(ctx *fasthttp.RequestCtx) {
 }
 
 func Update(ctx *fasthttp.RequestCtx) {
-	id := ctx.QueryArgs().Peek("id")
-	iduint, _ := strconv.ParseUint(string(id), 10, 64)
-	user := userserv.Update(iduint, ctx.Request.Body())
+	param := ctx.QueryArgs().Peek("id")
+	id, err := uuid.Parse(string(param))
+	if err != nil {
+		utils.Render(ctx, 400, &model.Message{"Invalid request"})
+	}
+
+	user := service.Update(id, ctx.Request.Body())
 	utils.Render(ctx, 200, user)
 }
 
 func Delete(ctx *fasthttp.RequestCtx) {
-	id := ctx.QueryArgs().Peek("id")
-	iduint, _ := strconv.ParseUint(string(id), 10, 64)
-	userserv.Remove(int(iduint))
+	param := ctx.QueryArgs().Peek("id")
+	id, err := uuid.Parse(string(param))
+
+	if err != nil {
+		logrus.Error(err)
+		utils.Render(ctx, 400, &model.Message{"Invalid request"})
+		return
+	}
+
+	service.Remove(id)
 	utils.Render(ctx, 202, nil)
+}
+
+func Show(ctx *fasthttp.RequestCtx) {
+	param := ctx.QueryArgs().Peek("id")
+	id, err := uuid.Parse(string(param))
+
+	if err != nil {
+		logrus.Error(err)
+		utils.Render(ctx, 400, &model.Message{"Invalid request"})
+		return
+	}
+
+	user, _ := service.FindById(id)
+	utils.Render(ctx, 200, user)
 }

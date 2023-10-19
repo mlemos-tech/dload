@@ -9,10 +9,10 @@ import (
 var postgreOnce = sync.Once{}
 var postgreInstance *gorm.DB
 
-func ConnectPostgres(uri string) {
+func ConnectPostgres(db DB) {
 
 	postgreOnce.Do(func() {
-		postgreInstance, _ = gorm.Open(postgres.Open(uri), &gorm.Config{})
+		postgreInstance, _ = gorm.Open(postgres.Open(db.Uri), &gorm.Config{})
 	})
 
 }
