@@ -1,0 +1,33 @@
+version: "3.3"
+services:
+  db:
+    image: postgres
+    networks: ["dload"]
+    environment:
+      POSTGRES_DB: dload
+      POSTGRES_USER: dload
+      POSTGRES_PASSWORD: 123
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5432:5432"
+  app:
+    build: .
+    restart: on-failure
+    networks: ["dload"]
+    entrypoint: ["/bin/sh", "-c", "sleep 10; /app/server"]
+    ports:
+      - "5000:8080"
+    depends_on:
+      - db
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
+      interval: 5s
+      timeout: 10s
+      retries: 2
+
+networks:
+  dload:

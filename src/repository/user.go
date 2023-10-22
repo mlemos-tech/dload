@@ -1,10 +1,11 @@
 package repository
 
 import (
+	"math"
+
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
-	"math"
 	"mikaellemos.com.br/dload/src/config"
 	"mikaellemos.com.br/dload/src/model"
 )
@@ -33,7 +34,7 @@ func (r *Repository) Insert(u *model.User) (*model.User, error) {
 func (r *Repository) Update(u *model.User) (*model.User, error) {
 	result := r.db.Model(&u).Updates(&model.User{
 		Name:     u.Name,
-		Birthday: u.Name,
+		Birthday: u.Birthday,
 	})
 	if result.Error != nil {
 		return nil, result.Error
